@@ -17,9 +17,10 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
     private List<Reminder> mReminderList;
     private final ReminderAdapterInteraction mListener;
 
-    public RemindersAdapter(List<Reminder> reminderList, ReminderAdapterInteraction listener) {
+    public RemindersAdapter(ReminderAdapterInteraction reminderAdapterInteraction, List<Reminder> reminderList) {
+        mListener = reminderAdapterInteraction;
         mReminderList = reminderList;
-        mListener = listener;
+
     }
 
     @NonNull
@@ -71,5 +72,6 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
     }
     public interface ReminderAdapterInteraction{
         void onDeleteReminder(Reminder reminder);
+        void onUpdateReminder(Reminder reminder);
     }
 }
