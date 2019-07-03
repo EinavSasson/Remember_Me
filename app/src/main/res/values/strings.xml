@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Remember Me</string>
     <string name="action_settings">Settings</string>
+    <string name="date_text">Set due date</string>
+    <string name="reminder_text">Add your reminder here…</string>
+    <string name="note_text">Additional notes (optional)</string>
+    <string name="button_title_new_reminder">CREATE NEW REMINDER</string>
 </resources>
