@@ -14,8 +14,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.rememberme.R;
+import com.rememberme.adapter.RemindersAdapter;
+import com.rememberme.model.Reminder;
 
-public class AddReminderDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
+public class AddReminderDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener, RemindersAdapter.ReminderAdapterInteraction {
 
     private ImageView mImageViewCloseButton;
     private TextView mTextViewDateTitle;
@@ -71,11 +73,25 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                 dismiss();
                 break;
             case R.id.text_date:
-                // TODO date picker - textView should open a date picker 
+                // TODO date picker - textView should open a date picker
                 break;
         }
     }
 
+    @Override
+    public void onDeleteReminder(Reminder reminder) {
+
+    }
+/*
+    @Override
+    public void onUpdateReminder(Reminder reminder) {
+      String titleReminder = mTextInputEditTextReminder.getText().toString();
+      String noteReminder = mTextInputEditTextNote.getText().toString();
+      reminder.setTitleReminder(titleReminder);
+      reminder.setNoteReminder(noteReminder);
+      AppDataBase.getInstance(getActivity()).mReminderDao().update(reminder);
+    }
+    */
     public interface AddReminderListener{
         void onAddReminderClick(String reminderText, String noteText);
     }
