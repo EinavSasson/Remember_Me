@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private RemindersAdapter mRemindersAdapter;
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
+    private Reminder mReminder;
 
 
     @Override
@@ -33,7 +34,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setViews();
         onClickListener();
         setRecyclerView();
+
+
     }
+
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+
+        switch (item.getItemId()) {
+            case 1:
+                mRemindersAdapter.deleteItem(item.getGroupId());
+                List<Reminder>updateReminderList = getReminderList();
+                mRemindersAdapter.updateList(updateReminderList);
+                return true;
+            default:
+        }
+        return super.onContextItemSelected(item);
+    }
+
     private void setViews() {
         mFloatingActionButton = findViewById(R.id.fab);
 
@@ -85,14 +103,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onDeleteReminder(Reminder reminder) {
+        List<Reminder>updateReminderList = getReminderList();
+        mRemindersAdapter.updateList(updateReminderList);
         AppDataBase.getInstance(this).mReminderDao().delete(reminder);
     }
-
+/*
     @Override
     public void onUpdateReminder(Reminder reminder) {
+        Toast.makeText(this, reminder.getTitleReminder(), Toast.LENGTH_SHORT).show();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(AddReminderDialogFragment.newInstance(), null);
         AppDataBase.getInstance(this).mReminderDao().update(reminder);
-    }
+        fragmentTransaction.commit();
 
+
+    }
+*/
     @Override
     public void onAddReminderClick(String reminderText, String noteText) {
         Reminder reminder =createReminder(reminderText, noteText);
@@ -100,4 +126,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<Reminder>updateReminderList = getReminderList();
         mRemindersAdapter.updateList(updateReminderList);
     }
+
 }
