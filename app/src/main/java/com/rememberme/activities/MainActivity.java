@@ -1,7 +1,9 @@
 package com.rememberme.activities;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 
 import com.rememberme.R;
 import com.rememberme.adapter.RemindersAdapter;
@@ -16,45 +19,49 @@ import com.rememberme.db.AppDataBase;
 import com.rememberme.fragment.AddReminderDialogFragment;
 import com.rememberme.model.Reminder;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, RemindersAdapter.ReminderAdapterInteraction, AddReminderDialogFragment.AddReminderListener {
+public class MainActivity extends AppCompatActivity implements OnClickListener, RemindersAdapter.ReminderAdapterInteraction, AddReminderDialogFragment.AddReminderListener{
+
     private RemindersAdapter mRemindersAdapter;
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
-    private Reminder mReminder;
+    private List<Reminder> mReminder = new ArrayList<>();
+    private AddReminderDialogFragment mAddReminderDialogFragment;
+    private Context mContext;
+    private AppDataBase mAppDataBase;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (mContext != null){
+            EventBus.getDefault().register(this);
+        }
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setViews();
         onClickListener();
         setRecyclerView();
 
-
     }
-
-    @Override
-    public boolean onContextItemSelected(MenuItem item) {
-
-        switch (item.getItemId()) {
-            case 1:
-                mRemindersAdapter.deleteItem(item.getGroupId());
-                List<Reminder>updateReminderList = getReminderList();
-                mRemindersAdapter.updateList(updateReminderList);
-                return true;
-            default:
-        }
-        return super.onContextItemSelected(item);
-    }
-
     private void setViews() {
         mFloatingActionButton = findViewById(R.id.fab);
 
+    }
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(String data) {
+        if(data.equals("refresh_data")) {
+            mRemindersAdapter.notifyDataSetChanged();
+        }
     }
     private void onClickListener(){
         mFloatingActionButton.setOnClickListener(this);
@@ -64,16 +71,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mRecyclerView  = findViewById(R.id.recyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(linearLayoutManager);
-        mRemindersAdapter = new RemindersAdapter(this, getReminderList());
+        mRemindersAdapter = new RemindersAdapter(getReminderList(), this, mContext);
         mRecyclerView.setAdapter(mRemindersAdapter);
     }
     private List<Reminder> getReminderList(){
         return AppDataBase.getInstance(this).mReminderDao().getAll();
     }
-    private Reminder createReminder(String reminderText, String noteText){
+    private Reminder createReminder(String reminderText, String noteText, String dateText){
         Reminder reminder = new Reminder();
         reminder.setTitleReminder(reminderText);
-        reminder.setNoteReminder(noteText);
+        reminder.setImportanceReminder(noteText);
         return reminder;
     }
 
@@ -102,29 +109,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onDeleteReminder(Reminder reminder) {
-        List<Reminder>updateReminderList = getReminderList();
-        mRemindersAdapter.updateList(updateReminderList);
-        AppDataBase.getInstance(this).mReminderDao().delete(reminder);
-    }
-/*
-    @Override
-    public void onUpdateReminder(Reminder reminder) {
-        Toast.makeText(this, reminder.getTitleReminder(), Toast.LENGTH_SHORT).show();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(AddReminderDialogFragment.newInstance(), null);
-        AppDataBase.getInstance(this).mReminderDao().update(reminder);
-        fragmentTransaction.commit();
-
-
-    }
-*/
-    @Override
-    public void onAddReminderClick(String reminderText, String noteText) {
-        Reminder reminder =createReminder(reminderText, noteText);
+    public void onAddReminderClick(String reminderText, String noteText, String dateText) {
+        Reminder reminder = createReminder(reminderText, noteText, dateText);
         AppDataBase.getInstance(this).mReminderDao().insert(reminder);
         List<Reminder>updateReminderList = getReminderList();
         mRemindersAdapter.updateList(updateReminderList);
     }
 
+    @Override
+    public void onUpdateReminder(Reminder reminder) {
+
+        //Toast.makeText(this, reminder.getTitleReminder(), Toast.LENGTH_SHORT).show();
+        AddReminderDialogFragment addReminderDialogFragment = new AddReminderDialogFragment();
+        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(AddReminderDialogFragment.newInstance(), null);
+        fragmentTransaction.commit();
+     //   AppDataBase.getInstance(this).mReminderDao().update(reminder);
+       // Bundle bundle = new Bundle();
+        //bundle.putString("data_reminder", "data");
+        //addReminderDialogFragment.setArguments(bundle);
+
+
+
+    }
 }
