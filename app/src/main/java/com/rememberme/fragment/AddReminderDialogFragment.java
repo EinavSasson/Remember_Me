@@ -1,6 +1,6 @@
 package com.rememberme.fragment;
 
-import android.content.Context;
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -9,90 +9,107 @@ import android.support.design.widget.TextInputEditText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.Spinner;
 
 import com.rememberme.R;
-import com.rememberme.adapter.RemindersAdapter;
 import com.rememberme.model.Reminder;
 
-public class AddReminderDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener, RemindersAdapter.ReminderAdapterInteraction {
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
-    private ImageView mImageViewCloseButton;
-    private TextView mTextViewDateTitle;
-    private TextInputEditText mTextInputEditTextReminder, mTextInputEditTextNote;
-    private Button mButtonCreateReminder;
+public class AddReminderDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
-    public AddReminderDialogFragment() {
-    }
+        private TextInputEditText mTextInputLayoutEditReminder;
+        private EditText mEditTextDate;
+        private Spinner mImportanceSpinner;
+        private Button mButtonSave, mButtonCancel;
+        private List<Reminder> mReminderList = new ArrayList<>();
+        private Date mDate;
+        private Reminder mReminder;
 
-    public static AddReminderDialogFragment newInstance(){
-        return new AddReminderDialogFragment();
-    }
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-       View view = inflater.inflate(R.layout.dialog_botton_sheet_add_reminder,container, false);
-       mImageViewCloseButton = view.findViewById(R.id.close_dialog_button);
-       mTextViewDateTitle = view.findViewById(R.id.text_date);
-       mTextInputEditTextReminder = view.findViewById(R.id.edit_reminder);
-       mTextInputEditTextNote = view.findViewById(R.id.edit_note);
-       mButtonCreateReminder = view.findViewById(R.id.button_new_reminder);
-       mButtonCreateReminder.setOnClickListener(this);
-       mImageViewCloseButton.setOnClickListener(this);
-       return view;
-    }
+      public AddReminderDialogFragment() {}
 
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+      public static AddReminderDialogFragment newInstance() {
+        return new AddReminderDialogFragment(); }
 
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-    }
+        @Nullable
+        @Override
+        public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+                View view = inflater.inflate(R.layout.dialog_botton_sheet_add_reminder, container, false);
+                mTextInputLayoutEditReminder = view.findViewById(R.id.edit_reminder);
+                mEditTextDate = view.findViewById(R.id.edit_date);
+                mImportanceSpinner = view.findViewById(R.id.spinner_importance);
+                mButtonSave = view.findViewById(R.id.save_button);
+                mButtonCancel = view.findViewById(R.id.cancel_button);
+                mButtonSave.setOnClickListener(this);
+                mButtonCancel.setOnClickListener(this);
+                mEditTextDate.setOnClickListener(this);
+                setupSpinner();
+                return view;
+                }
 
     @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.button_new_reminder:
-                AddReminderListener addReminderListener = (AddReminderListener) getActivity();
-                addReminderListener.onAddReminderClick(mTextInputEditTextReminder.getText().toString(),
-                        mTextInputEditTextNote.getText().toString());
-                       dismiss();
-                       break;
-            case R.id.close_dialog_button:
-                dismiss();
-                break;
-            case R.id.text_date:
-                // TODO date picker - textView should open a date picker
-                break;
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (getArguments() != null){
+            mTextInputLayoutEditReminder.setText(mReminder.getTitleReminder());
         }
     }
 
     @Override
-    public void onDeleteReminder(Reminder reminder) {
+        public void onClick(View v) {
+                switch (v.getId()) {
+                case R.id.save_button:
+                AddReminderListener addReminderListener = (AddReminderListener) getActivity();
+                addReminderListener.onAddReminderClick(mTextInputLayoutEditReminder.getText().toString(),
+                mImportanceSpinner.getSelectedItem().toString());
+                dismiss();
+                break;
+                case R.id.cancel_button:
+                dismiss();
+                break;
+                case R.id.edit_date:
+                datePicker();
+                break;
+                }
+      }
 
-    }
-/*
-    @Override
-    public void onUpdateReminder(Reminder reminder) {
-      String titleReminder = mTextInputEditTextReminder.getText().toString();
-      String noteReminder = mTextInputEditTextNote.getText().toString();
-      reminder.setTitleReminder(titleReminder);
-      reminder.setNoteReminder(noteReminder);
-      AppDataBase.getInstance(getActivity()).mReminderDao().update(reminder);
-    }
-    */
-    public interface AddReminderListener{
-        void onAddReminderClick(String reminderText, String noteText);
+        private void setupSpinner() {
+        ArrayAdapter importanceSpinnerAdapter = ArrayAdapter.createFromResource(getActivity(),
+        R.array.array_importance_options, android.R.layout.simple_spinner_item);
+        importanceSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        mImportanceSpinner.setAdapter(importanceSpinnerAdapter);
+      }
+      private void datePicker(){
+          final Calendar calendar = Calendar.getInstance();
+          int day = calendar.get(Calendar.DAY_OF_MONTH);
+          int month = calendar.get(Calendar.MONTH);
+          int years = calendar.get(Calendar.YEAR);
+          DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+              @Override
+              public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                  mEditTextDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                  Calendar instance = Calendar.getInstance();
+                  instance.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                  instance.set(Calendar.MONTH, month);
+                  instance.set(Calendar.YEAR, year);
+                  mDate = instance.getTime();
+              }
+          }, years, month, day);
+          datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+          datePickerDialog.show();
+      }
+
+
+    public interface AddReminderListener {
+            void onAddReminderClick(String reminderText, String noteText);
     }
 }
