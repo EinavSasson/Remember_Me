@@ -54,16 +54,19 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                 mButtonCancel.setOnClickListener(this);
                 mViewDate.setOnClickListener(this);
                 setupSpinner();
+
+            if (getArguments() != null) {
+                String reminderData = getArguments().getString("reminder_data");
+                mTextInputLayoutEditReminder.setText(mReminder.getTitleReminder());
+            }
+
+
                 return view;
                 }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-
-        if (getArguments() != null){
-            mTextInputLayoutEditReminder.setText(mReminder.getTitleReminder());
-        }
     }
 
     @Override
