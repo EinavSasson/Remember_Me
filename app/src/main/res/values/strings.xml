@@ -5,4 +5,13 @@
     <string name="reminder_text">Add your reminder here…</string>
     <string name="note_text">Additional notes (optional)</string>
     <string name="button_title_new_reminder">CREATE NEW REMINDER</string>
+    <string name="cancel_button">CANCEL</string>
+    <string name="save_button">SAVE</string>
+    <string name="title_spinner">Choose your importance</string>
+
+    <!--Array list Importance options-->
+    <string name="important">Important</string>
+    <string name="urgent">Urgent</string>
+    <string name="importance_unknown">Unknown</string>
+
 </resources>
