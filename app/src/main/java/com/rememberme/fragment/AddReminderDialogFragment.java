@@ -12,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.rememberme.R;
 import com.rememberme.model.Reminder;
@@ -26,7 +26,8 @@ import java.util.List;
 public class AddReminderDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
         private TextInputEditText mTextInputLayoutEditReminder;
-        private EditText mEditTextDate;
+        private TextView mTextViewDate;
+        private View mViewDate;
         private Spinner mImportanceSpinner;
         private Button mButtonSave, mButtonCancel;
         private List<Reminder> mReminderList = new ArrayList<>();
@@ -44,13 +45,14 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
         public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
                 View view = inflater.inflate(R.layout.dialog_botton_sheet_add_reminder, container, false);
                 mTextInputLayoutEditReminder = view.findViewById(R.id.edit_reminder);
-                mEditTextDate = view.findViewById(R.id.edit_date);
+                mTextViewDate = view.findViewById(R.id.edit_date);
+                mViewDate = view.findViewById(R.id.view_rectangle_date);
                 mImportanceSpinner = view.findViewById(R.id.spinner_importance);
                 mButtonSave = view.findViewById(R.id.save_button);
                 mButtonCancel = view.findViewById(R.id.cancel_button);
                 mButtonSave.setOnClickListener(this);
                 mButtonCancel.setOnClickListener(this);
-                mEditTextDate.setOnClickListener(this);
+                mViewDate.setOnClickListener(this);
                 setupSpinner();
                 return view;
                 }
@@ -70,13 +72,13 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                 case R.id.save_button:
                 AddReminderListener addReminderListener = (AddReminderListener) getActivity();
                 addReminderListener.onAddReminderClick(mTextInputLayoutEditReminder.getText().toString(),
-                mImportanceSpinner.getSelectedItem().toString());
+                mImportanceSpinner.getSelectedItem().toString(), mTextViewDate.getText().toString());
                 dismiss();
                 break;
                 case R.id.cancel_button:
                 dismiss();
                 break;
-                case R.id.edit_date:
+                case R.id.view_rectangle_date:
                 datePicker();
                 break;
                 }
@@ -96,7 +98,7 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
           DatePickerDialog datePickerDialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
               @Override
               public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
-                  mEditTextDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
+                  mTextViewDate.setText(dayOfMonth + "/" + (month + 1) + "/" + year);
                   Calendar instance = Calendar.getInstance();
                   instance.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                   instance.set(Calendar.MONTH, month);
@@ -104,12 +106,11 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                   mDate = instance.getTime();
               }
           }, years, month, day);
-          datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
           datePickerDialog.show();
       }
 
 
     public interface AddReminderListener {
-            void onAddReminderClick(String reminderText, String noteText);
+            void onAddReminderClick(String reminderText, String noteText, String dateText);
     }
 }
