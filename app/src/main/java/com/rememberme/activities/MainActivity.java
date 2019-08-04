@@ -118,16 +118,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     @Override
     public void onUpdateReminder(Reminder reminder) {
-
         //Toast.makeText(this, reminder.getTitleReminder(), Toast.LENGTH_SHORT).show();
         AddReminderDialogFragment addReminderDialogFragment = new AddReminderDialogFragment();
         FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.add(AddReminderDialogFragment.newInstance(), null);
+        Bundle bundle = new Bundle();
+        bundle.putString("reminder_data", "data");
+        addReminderDialogFragment.setArguments(bundle);
         fragmentTransaction.commit();
-     //   AppDataBase.getInstance(this).mReminderDao().update(reminder);
-       // Bundle bundle = new Bundle();
-        //bundle.putString("data_reminder", "data");
-        //addReminderDialogFragment.setArguments(bundle);
+
 
 
 
