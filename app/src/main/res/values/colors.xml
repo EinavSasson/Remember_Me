@@ -6,4 +6,6 @@
     <color name="colorGradientEnd">#E0F2F1</color>
     <color name="white">#FFFFFF</color>
     <color name="grey_border_color">#CFCFCF</color>
+    <color name="gray_dark_text">#5F5F5F</color>
+    <color name="color_background">#EAEBEF</color>
 </resources>
