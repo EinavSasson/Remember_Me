@@ -6,7 +6,7 @@ import android.arch.persistence.room.RoomDatabase;
 import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
-import com.rememberme.model.DateConverter;
+import com.rememberme.DateConverter;
 import com.rememberme.model.Reminder;
 
 @Database(entities = {Reminder.class}, version = 2, exportSchema = false)
