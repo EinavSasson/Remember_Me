@@ -3,13 +3,10 @@ package com.rememberme.activities;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 
@@ -18,10 +15,6 @@ import com.rememberme.adapter.RemindersAdapter;
 import com.rememberme.db.AppDataBase;
 import com.rememberme.fragment.AddReminderDialogFragment;
 import com.rememberme.model.Reminder;
-
-import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +34,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        if (mContext != null){
-            EventBus.getDefault().register(this);
-        }
-
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setViews();
@@ -55,13 +43,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     }
     private void setViews() {
         mFloatingActionButton = findViewById(R.id.fab);
-
-    }
-    @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(String data) {
-        if(data.equals("refresh_data")) {
-            mRemindersAdapter.notifyDataSetChanged();
-        }
     }
     private void onClickListener(){
         mFloatingActionButton.setOnClickListener(this);
@@ -81,29 +62,15 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         Reminder reminder = new Reminder();
         reminder.setTitleReminder(reminderText);
         reminder.setImportanceReminder(noteText);
+       // reminder.setDate(dateText);
         return reminder;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.fab:
-                AddReminderDialogFragment.newInstance().show(getSupportFragmentManager(), "add_reminder");
+               AddReminderDialogFragment.newInstance().show(getSupportFragmentManager(), "add_reminder");
                 break;
         }
     }
@@ -118,17 +85,35 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     @Override
     public void onUpdateReminder(Reminder reminder) {
-        //Toast.makeText(this, reminder.getTitleReminder(), Toast.LENGTH_SHORT).show();
-        AddReminderDialogFragment addReminderDialogFragment = new AddReminderDialogFragment();
-        FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.add(AddReminderDialogFragment.newInstance(), null);
         Bundle bundle = new Bundle();
-        bundle.putString("reminder_data", "data");
+        bundle.putString("reminder_title", bundle.getString(reminder.getTitleReminder()));
+
+       // bundle.putInt("reminder_priority", Integer.valueOf(reminder.getImportanceReminder().toString()));
+
+        AddReminderDialogFragment addReminderDialogFragment = new AddReminderDialogFragment();
+        addReminderDialogFragment.show(getSupportFragmentManager(), "bottom_sheet");
         addReminderDialogFragment.setArguments(bundle);
-        fragmentTransaction.commit();
+        AppDataBase.getInstance(this).mReminderDao().update(reminder);
 
 
+     //   FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+       // fragmentTransaction.add(AddReminderDialogFragment.newInstance(), null);
+
+      //  addReminderDialogFragment.setArguments(bundle);
 
 
+    }
+
+    @Override
+    public void onDeleteReminder(Reminder reminder) {
+        AppDataBase.getInstance(this).mReminderDao().delete(reminder);
+        List<Reminder>updateReminderList = getReminderList();
+        mRemindersAdapter.updateList(updateReminderList);
+    }
+
+    @Override
+    protected void onDestroy() {
+        AppDataBase.destroyInstance();
+        super.onDestroy();
     }
 }
