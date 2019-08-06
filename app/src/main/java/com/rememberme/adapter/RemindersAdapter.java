@@ -7,8 +7,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.rememberme.R;
@@ -40,8 +38,6 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         return new ViewHolder(view);
     }
 
-
-
     @Override
     public void onBindViewHolder(@NonNull final RemindersAdapter.ViewHolder viewHolder, int i) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("m");
@@ -63,7 +59,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         notifyDataSetChanged();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public final View mView;
         public final TextView tvTitle, tvImportance, tvDateMonth, tvDayReminder;
         public final CardView mCardView;
@@ -79,59 +75,33 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
             mCardView = itemView.findViewById(R.id.card_view_reminder);
 
             mView.setOnClickListener(this);
+            mView.setOnLongClickListener(this);
+
 
         }
             @Override
             public void onClick (View v){
-                EditText titleValue, bodyValue;
-                Button save, discard;
-
-                AppDataBase noteDatabase;
-                RemindersAdapter notesAdapter;
-/*
-                Toast.makeText(v.getContext(), "Einav", Toast.LENGTH_SHORT).show();
-                View newNoteDialogView = LayoutInflater.from(v.getContext()).inflate(R.layout.new_note_dialog, null);
-
-                AlertDialog.Builder newNoteDialogBuilder = new AlertDialog.Builder(v.getContext());
-                newNoteDialogBuilder.setView(newNoteDialogView);
-                final AlertDialog NewNoteDialog = newNoteDialogBuilder.create();
-                NewNoteDialog.show();
-
-                titleValue = newNoteDialogView.findViewById(R.id.title_editText_newNote_dialog);
-                bodyValue = newNoteDialogView.findViewById(R.id.body_editText_newNote_dialog);
-                save = newNoteDialogView.findViewById(R.id.save_new_note_dialog_btn);
-                discard = newNoteDialogView.findViewById(R.id.discard_new_note_dialog_btn);
-
-                note = mReminderList.get(getAdapterPosition());
-                titleValue.setText(note.getTitleReminder());
-              //  bodyValue.setText(note.getContent());
-                //  bodyValue.setText(note.getContent());
-
-                int position = (int) v.getTag();
-                */
-
-
                 int position = getAdapterPosition();
                 Reminder reminder = mReminderList.get(position);
                 if (mListener != null){
                     mListener.onUpdateReminder(reminder);
                 }
 
-
-                //mListener.onUpdateReminderClick();
-              //  mListener.onUpdateReminderClick(mReminderList.get(position).getTitleReminder(), mReminderList.get(position).getImportanceReminder());
-
-
-                //reminder = mReminderList.get(getAdapterPosition());
-
-
-
-
             }
 
+        @Override
+        public boolean onLongClick(View v) {
+            int position = (int) v.getTag();
+            Reminder reminder = mReminderList.get(position);
+            mListener.onDeleteReminder(reminder);
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, mReminderList.size());
+            return true;
+        }
     }
 
     public interface ReminderAdapterInteraction{
        void onUpdateReminder(Reminder reminder);
+       void onDeleteReminder(Reminder reminder);
     }
 }
