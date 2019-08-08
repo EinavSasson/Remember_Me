@@ -3,21 +3,19 @@ package com.rememberme.model;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
-import java.util.Date;
-
 @Entity
 public class Reminder {
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String titleReminder;
     private String importanceReminder;
-    private Date date;
+    private String date;
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

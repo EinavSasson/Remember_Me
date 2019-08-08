@@ -16,12 +16,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.rememberme.R;
-import com.rememberme.model.Reminder;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 
 public class AddReminderDialogFragment extends BottomSheetDialogFragment implements View.OnClickListener {
 
@@ -30,10 +27,7 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
         private View mViewDate;
         private Spinner mImportanceSpinner;
         private Button mButtonSave, mButtonCancel;
-        private List<Reminder> mReminderList = new ArrayList<>();
         private Date mDate;
-        private Reminder mReminder;
-        private AddReminderListener mListener;
 
 
       public AddReminderDialogFragment() {}
@@ -51,13 +45,9 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                 mImportanceSpinner = view.findViewById(R.id.spinner_importance);
 
                    // String title = this.getArguments().getString("reminder_title").toString();
-                   // mTextInputLayoutEditReminder.setText(title);
-
-
-            //   int priority = this.getArguments().getInt("reminder_priority");
-
-
-            //   mImportanceSpinner.setSelection(priority);
+                  // mTextInputLayoutEditReminder.setText(title);
+                 //   int priority = this.getArguments().getInt("reminder_priority");
+               //   mImportanceSpinner.setSelection(priority);
 
                 mButtonSave = view.findViewById(R.id.save_button);
                 mButtonCancel = view.findViewById(R.id.cancel_button);
@@ -68,19 +58,15 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                 return view;
                 }
 
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-    }
 
     @Override
         public void onClick(View v) {
                 switch (v.getId()) {
                 case R.id.save_button:
-                        AddReminderListener addReminderListener = (AddReminderListener) getActivity();
-                        addReminderListener.onAddReminderClick(mTextInputLayoutEditReminder.getText().toString(),
-                                mImportanceSpinner.getSelectedItem().toString(), mTextViewDate.getText().toString());
-                                dismiss();
+                    AddReminderListener addReminderListener = (AddReminderListener) getActivity();
+                    addReminderListener.onAddReminderClick(mTextInputLayoutEditReminder.getText().toString(),
+                            mImportanceSpinner.getSelectedItem().toString(), mTextViewDate.getText().toString());
+                    dismiss();
                 break;
                 case R.id.cancel_button:
                 dismiss();

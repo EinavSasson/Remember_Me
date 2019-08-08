@@ -10,20 +10,16 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.rememberme.R;
-import com.rememberme.db.AppDataBase;
+import com.rememberme.Utils;
 import com.rememberme.model.Reminder;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.ViewHolder>{
 
     private List<Reminder> mReminderList;
     private ReminderAdapterInteraction mListener;
-    private AppDataBase db;
     private Context mContext;
-    private Reminder mReminder;
-
 
     public RemindersAdapter(List<Reminder> reminderList, ReminderAdapterInteraction listener, Context context) {
         mReminderList = reminderList;
@@ -38,13 +34,13 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         return new ViewHolder(view);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull final RemindersAdapter.ViewHolder viewHolder, int i) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("m");
+        Reminder reminder = mReminderList.get(i);
         viewHolder.tvTitle.setText(mReminderList.get(i).getTitleReminder());
         viewHolder.tvImportance.setText(mReminderList.get(i).getImportanceReminder());
-      //  viewHolder.tvDateMonth.setText(Utils.getMonthDate(mReminder.getDate()));
-       // viewHolder.tvDayReminder.setText(Utils.getDayDate(mReminder.getDate()));
+        viewHolder.tvDateReminder.setText(Utils.formatDateTime(reminder.getDate()));
         viewHolder.mView.setTag(i);
     }
 
@@ -61,7 +57,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public final View mView;
-        public final TextView tvTitle, tvImportance, tvDateMonth, tvDayReminder;
+        public final TextView tvTitle, tvImportance, tvDateReminder;
         public final CardView mCardView;
 
         public ViewHolder(@NonNull final View itemView) {
@@ -70,8 +66,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
             mView = itemView;
             tvTitle = itemView.findViewById(R.id.titleReminder);
             tvImportance = itemView.findViewById(R.id.importanceReminder);
-            tvDateMonth = itemView.findViewById(R.id.textMonthReminder);
-            tvDayReminder = itemView.findViewById(R.id.textDayReminder);
+            tvDateReminder = itemView.findViewById(R.id.textDateReminder);
             mCardView = itemView.findViewById(R.id.card_view_reminder);
 
             mView.setOnClickListener(this);

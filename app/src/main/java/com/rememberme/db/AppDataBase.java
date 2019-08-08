@@ -9,7 +9,7 @@ import android.content.Context;
 import com.rememberme.DateConverter;
 import com.rememberme.model.Reminder;
 
-@Database(entities = {Reminder.class}, version = 2, exportSchema = false)
+@Database(entities = {Reminder.class}, version = 3, exportSchema = false)
 @TypeConverters(DateConverter.class)
 public abstract class AppDataBase extends RoomDatabase {
     public static final String DATABASE_NAME = "reminders";
