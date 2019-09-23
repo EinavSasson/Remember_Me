@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.rememberme.R;
-import com.rememberme.Utils;
 import com.rememberme.model.Reminder;
 
 import java.util.List;
@@ -40,7 +39,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
         Reminder reminder = mReminderList.get(i);
         viewHolder.tvTitle.setText(mReminderList.get(i).getTitleReminder());
         viewHolder.tvImportance.setText(mReminderList.get(i).getImportanceReminder());
-        viewHolder.tvDateReminder.setText(Utils.formatDateTime(reminder.getDate()));
+       // viewHolder.tvDateReminder.setText(Utils.formatDateTime(reminder.getDate()));
         viewHolder.mView.setTag(i);
     }
 
@@ -57,7 +56,7 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public final View mView;
-        public final TextView tvTitle, tvImportance, tvDateReminder;
+        public final TextView tvTitle, tvImportance, tvMonthReminder, tvDayReminder;
         public final CardView mCardView;
 
         public ViewHolder(@NonNull final View itemView) {
@@ -66,7 +65,8 @@ public class RemindersAdapter extends RecyclerView.Adapter<RemindersAdapter.View
             mView = itemView;
             tvTitle = itemView.findViewById(R.id.titleReminder);
             tvImportance = itemView.findViewById(R.id.importanceReminder);
-            tvDateReminder = itemView.findViewById(R.id.textDateReminder);
+            tvMonthReminder = itemView.findViewById(R.id.textMonthReminder);
+            tvDayReminder = itemView.findViewById(R.id.textDayReminder);
             mCardView = itemView.findViewById(R.id.card_view_reminder);
 
             mView.setOnClickListener(this);
