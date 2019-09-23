@@ -44,10 +44,14 @@ public class AddReminderDialogFragment extends BottomSheetDialogFragment impleme
                 mViewDate = view.findViewById(R.id.view_rectangle_date);
                 mImportanceSpinner = view.findViewById(R.id.spinner_importance);
 
-                   String title = this.getArguments().getString("reminder_title").toString();
-                   mTextInputLayoutEditReminder.setText(title);
-                   int priority = this.getArguments().getInt("reminder_priority");
-                   mImportanceSpinner.setSelection(priority);
+            String title = null;
+            int priority = 0;
+            if (this.getArguments() != null) {
+                title = this.getArguments().getString("reminder_title").toString();
+                priority = this.getArguments().getInt("reminder_priority");
+            }
+            mTextInputLayoutEditReminder.setText(title);
+            mImportanceSpinner.setSelection(priority);
 
                 mButtonSave = view.findViewById(R.id.save_button);
                 mButtonCancel = view.findViewById(R.id.cancel_button);
